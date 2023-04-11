@@ -4,7 +4,8 @@ import viteLogo from '/vite.svg';
 import './App.css';
 
 function App() {
-	const [profile, setProfile] = useState(null);
+	const [user, setUser] = useState(null);
+	const [playlists, setPlaylists] = useState(null);
 	useEffect(() => {
 		const args = new URLSearchParams(window.location.search);
 		const code = args.get('code');
@@ -13,7 +14,7 @@ function App() {
 			const clientId = localStorage.getItem('clientId');
 			const codeVerifier = localStorage.getItem('code-verifier');
 
-			console.log('codeverifier', codeVerifier);
+			//console.log('codeverifier', codeVerifier);
 
 			let body = new URLSearchParams({
 				grant_type: 'authorization_code',
@@ -38,10 +39,10 @@ function App() {
 				})
 				.then((data) => {
 					localStorage.setItem('access-token', data.access_token);
-					console.log(
+					/*console.log(
 						'Access Token Generated',
 						localStorage.getItem('access-token')
-					);
+					);*/
 					getProfile(data.access_token);
 				})
 				.catch((error) => {
@@ -57,12 +58,32 @@ function App() {
 
 				const data = await response.json();
 				console.log('profile received:', data);
-				setProfile(data);
+				setUser(data);
+				getPlaylists(data);
+
 				window.history.replaceState({}, document.title, '/');
 			}
+			const getPlaylists = async (user) => {
+				const response = await fetch(
+					`https://api.spotify.com/v1/users/${user.id}/playlists`,
+					{
+						headers: {
+							Authorization: 'Bearer ' + localStorage.getItem('access-token'),
+						},
+					}
+				);
+				const data = await response.json();
+				console.log('playlist test', data);
+				const ownedPlayLists = data.items.filter(
+					(playlist) => playlist.owner.display_name === user.display_name
+				);
+				setPlaylists(ownedPlayLists);
+			};
 		}
 	}, []);
 
+	console.log('profile state', user);
+	console.log('playlist state', playlists);
 	const handleLogIn = async () => {
 		localStorage.clear();
 		const generateRandomString = (length) => {
@@ -102,7 +123,7 @@ function App() {
 			let scope = 'user-read-private user-read-email';
 
 			localStorage.setItem('code-verifier', codeVerifier);
-			console.log('code verified:', localStorage.getItem('code-verifier'));
+			//console.log('code verified:', localStorage.getItem('code-verifier'));
 
 			let args = new URLSearchParams({
 				response_type: 'code',
@@ -123,10 +144,34 @@ function App() {
 
 	return (
 		<div>
-			{profile === null ? (
-				<button onClick={handleLogIn}>Spotify Login</button>
+			{playlists ? (
+				<div className='hero min-h-screen bg-base-200'>
+					<div className='hero-content flex-col'>
+						<div className='text-center'>
+							<h1 className='text-5xl font-bold'>
+								Welcome {user.display_name}!
+							</h1>
+							<p className='py-6'>Select a playlist below to view or edit.</p>
+						</div>
+						<div className='card flex-shrink-0 w-full max-w-md shadow-2xl bg-base-100'>
+							<div className='card-body'>
+								{playlists.map((playlist, i) => {
+									return (
+										<button
+											key={i}
+											onClick={() => handlePlaylist(i)}
+											className='btn btn-secondary'
+										>
+											{playlist.name}
+										</button>
+									);
+								})}
+							</div>
+						</div>
+					</div>
+				</div>
 			) : (
-				<p>Logged In!</p>
+				<button onClick={handleLogIn}>Spotify Login</button>
 			)}
 		</div>
 	);
