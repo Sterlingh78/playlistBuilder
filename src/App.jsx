@@ -6,6 +6,7 @@ import './App.css';
 function App() {
 	const [user, setUser] = useState(null);
 	const [playlists, setPlaylists] = useState(null);
+	const [currentPlaylist, setCurrentPlaylist] = useState(null);
 	useEffect(() => {
 		const args = new URLSearchParams(window.location.search);
 		const code = args.get('code');
@@ -81,9 +82,6 @@ function App() {
 			};
 		}
 	}, []);
-
-	console.log('profile state', user);
-	console.log('playlist state', playlists);
 	const handleLogIn = async () => {
 		localStorage.clear();
 		const generateRandomString = (length) => {
@@ -141,7 +139,62 @@ function App() {
 			console.log('redirected');
 		}
 	};
+	const fetchPlaylist = async (i) => {
+		const response = await fetch(
+			`https://api.spotify.com/v1/playlists/${playlists[i].id}`,
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('access-token'),
+				},
+			}
+		);
+		const data = await response.json();
+		return data;
+	};
+	let itemsArr = [];
+	const fetchTracks = async (link) => {
+		const response = await fetch(`${link}`, {
+			headers: {
+				Authorization: 'Bearer ' + localStorage.getItem('access-token'),
+			},
+		});
+		const data = await response.json();
+		itemsArr = [...itemsArr, ...data.items];
+		if (data.next !== null) {
+			return fetchTracks(data.next);
+		} else {
+			console.log('made array', itemsArr);
+			return itemsArr;
+		}
+	};
+	const handlePlaylist = async (i) => {
+		const data = await fetchPlaylist(i);
+		console.log('promise test', data);
+		const tracks = await fetchTracks(data.tracks.href);
+		console.log('123234', tracks);
+		setCurrentPlaylist({
+			name: data.name,
+			description: data.description,
+			followers: data.followers,
+			image: data.images[0],
+			tracks: [...tracks],
+		});
 
+		//fetchTracks(data.tracks.href);
+
+		/*const tracks = fetchTracks(data.tracks.href)
+		setCurrentPlaylist({
+			name: data.name,
+			description: data.description,
+			followers: data.followers,
+			image: data.images[0],
+			tracks: [...tracks]
+		})
+		if (data.tracks.next !== null) {
+			const tracks = fetchTracks(data.tracks.next)
+		}*/
+	};
+	console.log('playlist test', currentPlaylist);
 	return (
 		<div>
 			{playlists ? (
