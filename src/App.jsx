@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
-import './App.css';
+//import './App.css';
 
 function App() {
 	const [user, setUser] = useState(null);
-	const [playlists, setPlaylists] = useState(null);
+	const [ownedPlaylists, setOwnedPlaylists] = useState(null);
 	const [currentPlaylist, setCurrentPlaylist] = useState(null);
+	const [currentState, setCurrentState] = useState('login');
 	useEffect(() => {
 		const args = new URLSearchParams(window.location.search);
 		const code = args.get('code');
@@ -78,7 +77,8 @@ function App() {
 				const ownedPlayLists = data.items.filter(
 					(playlist) => playlist.owner.display_name === user.display_name
 				);
-				setPlaylists(ownedPlayLists);
+				setOwnedPlaylists(ownedPlayLists);
+				setCurrentState('playlists');
 			};
 		}
 	}, []);
@@ -141,7 +141,7 @@ function App() {
 	};
 	const fetchPlaylist = async (i) => {
 		const response = await fetch(
-			`https://api.spotify.com/v1/playlists/${playlists[i].id}`,
+			`https://api.spotify.com/v1/playlists/${ownedPlaylists[i].id}`,
 			{
 				headers: {
 					Authorization: 'Bearer ' + localStorage.getItem('access-token'),
@@ -163,15 +163,12 @@ function App() {
 		if (data.next !== null) {
 			return fetchTracks(data.next);
 		} else {
-			console.log('made array', itemsArr);
 			return itemsArr;
 		}
 	};
 	const handlePlaylist = async (i) => {
 		const data = await fetchPlaylist(i);
-		console.log('promise test', data);
 		const tracks = await fetchTracks(data.tracks.href);
-		console.log('123234', tracks);
 		setCurrentPlaylist({
 			name: data.name,
 			description: data.description,
@@ -179,55 +176,72 @@ function App() {
 			image: data.images[0],
 			tracks: [...tracks],
 		});
-
-		//fetchTracks(data.tracks.href);
-
-		/*const tracks = fetchTracks(data.tracks.href)
-		setCurrentPlaylist({
-			name: data.name,
-			description: data.description,
-			followers: data.followers,
-			image: data.images[0],
-			tracks: [...tracks]
-		})
-		if (data.tracks.next !== null) {
-			const tracks = fetchTracks(data.tracks.next)
-		}*/
 	};
-	console.log('playlist test', currentPlaylist);
-	return (
-		<div>
-			{playlists ? (
-				<div className='hero min-h-screen bg-base-200'>
-					<div className='hero-content flex-col'>
-						<div className='text-center'>
-							<h1 className='text-5xl font-bold'>
-								Welcome {user.display_name}!
-							</h1>
-							<p className='py-6'>Select a playlist below to view or edit.</p>
-						</div>
-						<div className='card flex-shrink-0 w-full max-w-md shadow-2xl bg-base-100'>
-							<div className='card-body'>
-								{playlists.map((playlist, i) => {
-									return (
-										<button
-											key={i}
-											onClick={() => handlePlaylist(i)}
-											className='btn btn-secondary'
-										>
-											{playlist.name}
-										</button>
-									);
-								})}
-							</div>
+
+	let content;
+	if (currentState === 'login') {
+		content = <button onClick={handleLogIn}>Spotify Login</button>;
+	} else if (currentState === 'playlists' && ownedPlaylists) {
+		content = (
+			<div className='hero min-h-screen bg-base-200'>
+				<div className='hero-content flex-col'>
+					<div className='text-center'>
+						<h1 className='text-5xl font-bold'>Welcome {user.display_name}!</h1>
+						<p className='py-6'>Select a playlist below to view or edit.</p>
+					</div>
+					<div className='card flex-shrink-0 w-full max-w-md shadow-2xl bg-base-100'>
+						<div className='card-body'>
+							{ownedPlaylists.map((playlist, i) => {
+								return (
+									<button
+										key={i}
+										onClick={() => handlePlaylist(i)}
+										className='btn btn-secondary'
+									>
+										{playlist.name}
+									</button>
+								);
+							})}
 						</div>
 					</div>
 				</div>
-			) : (
-				<button onClick={handleLogIn}>Spotify Login</button>
-			)}
-		</div>
-	);
+			</div>
+		);
+	} else if (currentState === 'playlistDetails') {
+		content = (
+			<div className='drawer drawer-mobile'>
+				<input
+					id='my-drawer-2'
+					type='checkbox'
+					className='drawer-toggle'
+				/>
+				<div className='drawer-content flex flex-col items-center justify-center'>
+					<label
+						htmlFor='my-drawer-2'
+						className='btn btn-primary drawer-button lg:hidden'
+					>
+						Open drawer
+					</label>
+				</div>
+				<div className='drawer-side'>
+					<label
+						htmlFor='my-drawer-2'
+						className='drawer-overlay'
+					></label>
+					<ul className='menu p-4 w-80 bg-base-100 text-base-content'>
+						<li>
+							<a>Sidebar Item 1</a>
+						</li>
+						<li>
+							<a>Sidebar Item 2</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		);
+	}
+	console.log('Playlist State Populated', currentPlaylist);
+	return content;
 }
 
 export default App;
