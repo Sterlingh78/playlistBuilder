@@ -173,6 +173,7 @@ function App() {
 		const tracks = await fetchTracks(data.tracks.href);
 		setCurrentPlaylist({
 			name: data.name,
+			id: data.id,
 			description: data.description,
 			followers: data.followers,
 			image: data.images[0],
