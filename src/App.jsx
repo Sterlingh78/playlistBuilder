@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import PlaylistList from './components/PlaylistList';
+import Details from './components/Details';
 //import './App.css';
 
 function App() {
@@ -176,68 +178,37 @@ function App() {
 			image: data.images[0],
 			tracks: [...tracks],
 		});
+		setCurrentState('playlistDetails');
 	};
 
 	let content;
 	if (currentState === 'login') {
-		content = <button onClick={handleLogIn}>Spotify Login</button>;
-	} else if (currentState === 'playlists' && ownedPlaylists) {
 		content = (
-			<div className='hero min-h-screen bg-base-200'>
-				<div className='hero-content flex-col'>
-					<div className='text-center'>
-						<h1 className='text-5xl font-bold'>Welcome {user.display_name}!</h1>
-						<p className='py-6'>Select a playlist below to view or edit.</p>
-					</div>
-					<div className='card flex-shrink-0 w-full max-w-md shadow-2xl bg-base-100'>
-						<div className='card-body'>
-							{ownedPlaylists.map((playlist, i) => {
-								return (
-									<button
-										key={i}
-										onClick={() => handlePlaylist(i)}
-										className='btn btn-secondary'
-									>
-										{playlist.name}
-									</button>
-								);
-							})}
-						</div>
-					</div>
+			<div className='hero min-h-screen'>
+				<div className='hero-content'>
+					<button
+						onClick={handleLogIn}
+						className='btn btn-primary'
+					>
+						Spotify Log In
+					</button>
 				</div>
 			</div>
 		);
-	} else if (currentState === 'playlistDetails') {
+	} else if (currentState === 'playlists' && ownedPlaylists) {
 		content = (
-			<div className='drawer drawer-mobile'>
-				<input
-					id='my-drawer-2'
-					type='checkbox'
-					className='drawer-toggle'
-				/>
-				<div className='drawer-content flex flex-col items-center justify-center'>
-					<label
-						htmlFor='my-drawer-2'
-						className='btn btn-primary drawer-button lg:hidden'
-					>
-						Open drawer
-					</label>
-				</div>
-				<div className='drawer-side'>
-					<label
-						htmlFor='my-drawer-2'
-						className='drawer-overlay'
-					></label>
-					<ul className='menu p-4 w-80 bg-base-100 text-base-content'>
-						<li>
-							<a>Sidebar Item 1</a>
-						</li>
-						<li>
-							<a>Sidebar Item 2</a>
-						</li>
-					</ul>
-				</div>
-			</div>
+			<PlaylistList
+				handlePlaylist={handlePlaylist}
+				ownedPlaylists={ownedPlaylists}
+				user={user}
+			/>
+		);
+	} else if (currentState === 'playlistDetails' && currentPlaylist) {
+		content = (
+			<Details
+				user={user}
+				currentPlaylist={currentPlaylist}
+			/>
 		);
 	}
 	console.log('Playlist State Populated', currentPlaylist);
