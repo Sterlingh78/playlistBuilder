@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import PlaylistList from './components/PlaylistList';
 import Details from './components/Details';
+import Navbar from './components/Navbar';
 //import './App.css';
 
 function App() {
@@ -8,6 +9,25 @@ function App() {
 	const [ownedPlaylists, setOwnedPlaylists] = useState(null);
 	const [currentPlaylist, setCurrentPlaylist] = useState(null);
 	const [currentState, setCurrentState] = useState('login');
+	const getPlaylists = async (user) => {
+		const response = await fetch(`https://api.spotify.com/v1/me/playlists`, {
+			headers: {
+				Authorization: 'Bearer ' + localStorage.getItem('access-token'),
+			},
+		});
+		const data = await response.json();
+		console.log('playlist test', data);
+		const ownedPlayListsData = data.items.filter(
+			(playlist) => playlist.owner.display_name === user.display_name
+		);
+		console.log('owned test', ownedPlayListsData);
+		setOwnedPlaylists(ownedPlayListsData);
+		setCurrentState('playlists');
+	};
+	const handleBackArrow = () => {
+		setCurrentState('playlists');
+	};
+	const addPlaylist = async () => {};
 	useEffect(() => {
 		const args = new URLSearchParams(window.location.search);
 		const code = args.get('code');
@@ -65,23 +85,6 @@ function App() {
 
 				window.history.replaceState({}, document.title, '/');
 			}
-			const getPlaylists = async (user) => {
-				const response = await fetch(
-					`https://api.spotify.com/v1/users/${user.id}/playlists`,
-					{
-						headers: {
-							Authorization: 'Bearer ' + localStorage.getItem('access-token'),
-						},
-					}
-				);
-				const data = await response.json();
-				console.log('playlist test', data);
-				const ownedPlayLists = data.items.filter(
-					(playlist) => playlist.owner.display_name === user.display_name
-				);
-				setOwnedPlaylists(ownedPlayLists);
-				setCurrentState('playlists');
-			};
 		}
 	}, []);
 	const handleLogIn = async () => {
@@ -120,7 +123,8 @@ function App() {
 
 		generateCodeChallenge(codeVerifier).then((codeChallenge) => {
 			let state = generateRandomString(16);
-			let scope = 'user-read-private user-read-email';
+			let scope =
+				'user-read-private user-read-email playlist-read-private playlist-modify-public playlist-modify-private';
 
 			localStorage.setItem('code-verifier', codeVerifier);
 			//console.log('code verified:', localStorage.getItem('code-verifier'));
@@ -142,14 +146,15 @@ function App() {
 		}
 	};
 	const fetchPlaylist = async (i) => {
-		const response = await fetch(
-			`https://api.spotify.com/v1/playlists/${ownedPlaylists[i].id}`,
-			{
-				headers: {
-					Authorization: 'Bearer ' + localStorage.getItem('access-token'),
-				},
-			}
-		);
+		let url;
+		if (i.length > 2) {
+			url = `https://api.spotify.com/v1/playlists/${i}`;
+		} else url = `https://api.spotify.com/v1/playlists/${ownedPlaylists[i].id}`;
+		const response = await fetch(url, {
+			headers: {
+				Authorization: 'Bearer ' + localStorage.getItem('access-token'),
+			},
+		});
 		const data = await response.json();
 		return data;
 	};
@@ -199,6 +204,7 @@ function App() {
 	} else if (currentState === 'playlists' && ownedPlaylists) {
 		content = (
 			<PlaylistList
+				getPlaylists={getPlaylists}
 				handlePlaylist={handlePlaylist}
 				ownedPlaylists={ownedPlaylists}
 				user={user}
@@ -207,13 +213,21 @@ function App() {
 	} else if (currentState === 'playlistDetails' && currentPlaylist) {
 		content = (
 			<Details
+				handleBackArrow={handleBackArrow}
 				user={user}
 				currentPlaylist={currentPlaylist}
+				handlePlaylist={handlePlaylist}
 			/>
 		);
 	}
 	console.log('Playlist State Populated', currentPlaylist);
-	return content;
+	console.log('user info', user);
+	return (
+		<div>
+			{currentState !== 'login' ? <Navbar user={user} /> : ''}
+			{content}
+		</div>
+	);
 }
 
 export default App;

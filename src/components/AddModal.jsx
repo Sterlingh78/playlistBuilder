@@ -1,23 +1,31 @@
-import { useRef } from 'react';
-export default function Modal({ currentPlaylist }) {
+import { useRef, useState } from 'react';
+export default function AddModal({ getPlaylists, user }) {
+	const [toggled, setToggled] = useState(true);
 	const nameRef = useRef(null);
 	const descriptionRef = useRef(null);
-	const toggleRef = useRef(null);
-	const handleEdit = async () => {
-		let name;
-		let description;
-		let privateToggle;
 
+	const createPlaylist = async () => {
+		if (nameRef.current.value === '' || descriptionRef.current.value === '') {
+			return;
+		}
 		const response = await fetch(
-			`https://api.spotify.com/v1/playlists/${currentPlaylist.id}`,
+			`https://api.spotify.com/v1/users/${user.id}/playlists`,
 			{
 				headers: {
 					Authorization: 'Bearer ' + localStorage.getItem('access-token'),
 				},
+				method: 'POST',
+				body: JSON.stringify({
+					name: nameRef.current.value,
+					description: descriptionRef.current.value,
+					public: toggled,
+				}),
 			}
 		);
-		const data = await response.json();
-		return data;
+		const string = await response.text();
+		const json = string === '' ? {} : JSON.parse(string);
+		console.log('post test', json);
+		getPlaylists(user);
 	};
 	return (
 		<div>
@@ -28,13 +36,15 @@ export default function Modal({ currentPlaylist }) {
 			/>
 			<div className='modal'>
 				<div className='modal-box text-center'>
-					<h2>Playlist Edit</h2>
+					<h2>Create Playlist</h2>
 					<input
+						ref={nameRef}
 						type='text'
 						placeholder='Name...'
 						className='input input-bordered w-full max-w-xs mt-2'
 					/>
 					<input
+						ref={descriptionRef}
 						type='text'
 						placeholder='Description...'
 						className='input input-bordered w-full max-w-xs mt-2'
@@ -43,16 +53,17 @@ export default function Modal({ currentPlaylist }) {
 						<div className='cursor-pointer'>
 							<span className='label-text'>Private Playlist</span>
 							<input
+								onChange={() => setToggled(!toggled)}
 								type='checkbox'
-								className='ml-2 mt-2 toggle toggle-secondary'
+								className='checkbox'
 							/>
 						</div>
 					</div>
 					<div className='flex justify-center mt-2 gap-2'>
 						<label
+							onClick={createPlaylist}
 							htmlFor='my-modal'
 							className='btn'
-							onClick={handleEdit}
 						>
 							Save
 						</label>

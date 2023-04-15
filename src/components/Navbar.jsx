@@ -1,22 +1,33 @@
-export default function Navbar({}) {
+export default function Navbar({ user }) {
+	const handleLogout = () => {
+		location.reload();
+	};
 	return (
 		<div className='navbar bg-base-100'>
-			<div className='mx-auto flex flex-col'>
-				<div>
-					<a className='btn btn-ghost normal-case text-xl'>daisyUI</a>
-				</div>
-
-				<input
-					type='text'
-					placeholder='Search'
-					className='input input-bordered input-sm w-full'
-				/>
-
-				<div className='mt-2 gap-2 flex flex-row'>
-					<button className='btn btn-primary btn-sm'>Artist</button>
-					<button className='btn btn-primary btn-sm'>Album</button>
-					<button className='btn btn-primary btn-sm'>Song</button>
-					<button className='btn btn-primary btn-sm'>Audiobook</button>
+			<div className='flex-1'>
+				<a className='btn btn-ghost normal-case text-xl'>daisyUI</a>
+			</div>
+			<div className='flex-none gap-2'>
+				<div className='dropdown dropdown-end'>
+					<label
+						tabIndex={0}
+						className='btn btn-ghost btn-circle avatar'
+					>
+						<div className='w-10 rounded-full'>
+							<img src={user.images[0].url} />
+						</div>
+					</label>
+					<ul
+						tabIndex={0}
+						className='mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52'
+					>
+						<li>
+							<a>Theme</a>
+						</li>
+						<li onClick={handleLogout}>
+							<a>Logout</a>
+						</li>
+					</ul>
 				</div>
 			</div>
 		</div>

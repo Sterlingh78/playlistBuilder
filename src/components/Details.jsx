@@ -1,10 +1,17 @@
-import Navbar from './Navbar';
-import Modal from './Modal';
+import SearchBar from './Searchbar';
+import EditModal from './EditModal';
 
-export default function Details({ currentPlaylist }) {
+export default function Details({
+	currentPlaylist,
+	handlePlaylist,
+	handleBackArrow,
+}) {
 	return (
 		<div>
-			<Modal currentPlaylist={currentPlaylist} />
+			<EditModal
+				currentPlaylist={currentPlaylist}
+				handlePlaylist={handlePlaylist}
+			/>
 			<div className='drawer'>
 				<input
 					id='my-drawer'
@@ -12,7 +19,7 @@ export default function Details({ currentPlaylist }) {
 					className='drawer-toggle'
 				/>
 				<div className='drawer-content'>
-					<Navbar />
+					<SearchBar />
 					<div>
 						<label
 							htmlFor='my-drawer'
@@ -29,6 +36,25 @@ export default function Details({ currentPlaylist }) {
 					></label>
 					<ul className='menu p-4 w-80 bg-base-100 text-base-content'>
 						<div>
+							<button
+								onClick={handleBackArrow}
+								className='btn btn-circle btn-outline mb-4'
+							>
+								<svg
+									xmlns='http://www.w3.org/2000/svg'
+									width='24'
+									height='24'
+									viewBox='0 0 24 24'
+									fill='none'
+									stroke='#000000'
+									strokeWidth='2'
+									strokeLinecap='round'
+									strokeLinejoin='round'
+								>
+									<path d='M19 12H6M12 5l-7 7 7 7' />
+								</svg>
+							</button>
+
 							<h1 className='ml-2 text-xl my-auto font-bold'>
 								{currentPlaylist.name}
 							</h1>
