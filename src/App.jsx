@@ -45,6 +45,7 @@ function App() {
 				client_id: clientId,
 				code_verifier: codeVerifier,
 			});
+			console.log('body test', body.toString());
 
 			const response = fetch('https://accounts.spotify.com/api/token', {
 				method: 'POST',
