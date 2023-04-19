@@ -3,6 +3,7 @@ export default function SearchBar({
 	currentPlaylist,
 	handleDrawer,
 	passSearchData,
+	clearSearch,
 }) {
 	const [params, setParams] = useState([]);
 	const [artistChecked, setArtistChecked] = useState(false);
@@ -65,13 +66,48 @@ export default function SearchBar({
 					</a>
 				</div>
 
-				<input
-					ref={searchRef}
-					onKeyDown={(e) => handleSearch(e)}
-					type='text'
-					placeholder='Search'
-					className='input input-bordered input-sm w-full'
-				/>
+				<div className='relative'>
+					<input
+						ref={searchRef}
+						onKeyDown={(e) => handleSearch(e)}
+						type='text'
+						placeholder='Search'
+						className='input input-bordered input-sm w-full'
+					/>
+					<button
+						onClick={() => {
+							clearSearch();
+							searchRef.current.value = '';
+						}}
+						type='button'
+						className=' absolute right-0 top-0 h-full pr-1'
+					>
+						<svg
+							xmlns='http://www.w3.org/2000/svg'
+							width='17'
+							height='17'
+							viewBox='0 0 24 24'
+							fill='none'
+							stroke='#000000'
+							strokeWidth='2'
+							strokeLinecap='round'
+							strokeLinejoin='round'
+						>
+							<line
+								x1='18'
+								y1='6'
+								x2='6'
+								y2='18'
+							></line>
+							<line
+								x1='6'
+								y1='6'
+								x2='18'
+								y2='18'
+							></line>
+						</svg>
+					</button>
+				</div>
 
 				<div className='mt-2 gap-2 flex flex-row'>
 					<div className='flex'>

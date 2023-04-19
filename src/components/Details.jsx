@@ -18,6 +18,9 @@ export default function Details({
 	const passSearchData = (data) => {
 		setSearchData(data);
 	};
+	const clearSearch = () => {
+		setSearchData(null);
+	};
 	return (
 		<div>
 			<EditModal
@@ -37,12 +40,17 @@ export default function Details({
 						handleDrawer={handleDrawer}
 						currentPlaylist={currentPlaylist}
 						passSearchData={passSearchData}
+						clearSearch={clearSearch}
 					/>
-					<div>
-						<Tracks searchData={searchData} />
-						<Artists searchData={searchData} />
-						<Albums searchData={searchData} />
-					</div>
+					{searchData !== null ? (
+						<div>
+							<Tracks searchData={searchData} />
+							<Artists searchData={searchData} />
+							<Albums searchData={searchData} />
+						</div>
+					) : (
+						''
+					)}
 				</div>
 				<div className='drawer-side'>
 					<label
