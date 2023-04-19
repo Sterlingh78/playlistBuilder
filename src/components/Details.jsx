@@ -1,11 +1,23 @@
+import { useState } from 'react';
 import SearchBar from './SearchBar';
 import EditModal from './EditModal';
+import Albums from './Albums';
+import Artists from './Artists';
+import Tracks from './Tracks';
 
 export default function Details({
 	currentPlaylist,
 	handlePlaylist,
 	handleBackArrow,
 }) {
+	const [drawerOpen, setDrawerOpen] = useState(false);
+	const [searchData, setSearchData] = useState(null);
+	const handleDrawer = () => {
+		setDrawerOpen(!drawerOpen);
+	};
+	const passSearchData = (data) => {
+		setSearchData(data);
+	};
 	return (
 		<div>
 			<EditModal
@@ -14,23 +26,27 @@ export default function Details({
 			/>
 			<div className='drawer'>
 				<input
+					checked={drawerOpen}
+					readOnly
 					id='my-drawer'
 					type='checkbox'
 					className='drawer-toggle'
 				/>
 				<div className='drawer-content'>
-					<SearchBar />
+					<SearchBar
+						handleDrawer={handleDrawer}
+						currentPlaylist={currentPlaylist}
+						passSearchData={passSearchData}
+					/>
 					<div>
-						<label
-							htmlFor='my-drawer'
-							className='btn btn-primary drawer-button'
-						>
-							Open drawer
-						</label>
+						<Tracks searchData={searchData} />
+						<Artists searchData={searchData} />
+						<Albums searchData={searchData} />
 					</div>
 				</div>
 				<div className='drawer-side'>
 					<label
+						onClick={handleDrawer}
 						htmlFor='my-drawer'
 						className='drawer-overlay'
 					></label>
@@ -69,7 +85,7 @@ export default function Details({
 						{currentPlaylist.tracks.map((trackObj, i) => {
 							return (
 								<li key={i}>
-									<a>{trackObj.track.name}</a>
+									<a>{trackObj?.track?.name}</a>
 								</li>
 							);
 						})}

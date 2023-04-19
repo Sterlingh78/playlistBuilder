@@ -1,5 +1,9 @@
 import { useState, useRef } from 'react';
-export default function SearchBar({}) {
+export default function SearchBar({
+	currentPlaylist,
+	handleDrawer,
+	passSearchData,
+}) {
 	const [params, setParams] = useState([]);
 	const [artistChecked, setArtistChecked] = useState(false);
 	const [albumChecked, setAlbumChecked] = useState(false);
@@ -39,6 +43,7 @@ export default function SearchBar({}) {
 				const string = await response.text();
 				const json = string === '' ? {} : JSON.parse(string);
 				setCurrentResults(json);
+				passSearchData(json);
 				//console.log('search test', json);
 			} catch (err) {
 				console.log(err);
@@ -52,7 +57,12 @@ export default function SearchBar({}) {
 		<div className='navbar bg-base-100'>
 			<div className='mx-auto flex flex-col'>
 				<div>
-					<a className='btn btn-ghost normal-case text-xl'>daisyUI</a>
+					<a
+						onClick={handleDrawer}
+						className='btn btn-ghost normal-case text-xl'
+					>
+						{currentPlaylist.name}
+					</a>
 				</div>
 
 				<input
