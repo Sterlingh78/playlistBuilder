@@ -1,4 +1,4 @@
-import SearchBar from './Searchbar';
+import SearchBar from './SearchBar';
 import EditModal from './EditModal';
 
 export default function Details({

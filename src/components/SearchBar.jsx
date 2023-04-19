@@ -1,40 +1,52 @@
 import { useState, useRef } from 'react';
 export default function SearchBar({}) {
-	const [params, setParams] = useState(null);
+	const [params, setParams] = useState([]);
+	const [artistChecked, setArtistChecked] = useState(false);
+	const [albumChecked, setAlbumChecked] = useState(false);
+	const [trackChecked, setTrackChecked] = useState(false);
+	const [audiobookChecked, setAudiobookChecked] = useState(false);
+	const [currentResults, setCurrentResults] = useState(null);
 	const searchRef = useRef(null);
 	const addParams = (param) => {
-		const cleanParams = params.filter((item) => item !== param);
-		setParams([...cleanParams, param]);
+		const contained = params.includes(param);
+
+		if (contained === true) {
+			const cleanParams = params.filter((item) => item !== param);
+			setParams([...cleanParams]);
+		} else {
+			setParams((prevState) => [...prevState, param]);
+		}
 	};
-	const handleSearch = async () => {
-		const arr = ['artist', 'album', 'track', 'audiobook'];
-		const body = new URLSearchParams({
-			q: 'pink floyd',
-			type: arr,
-			market: 'ES',
-		});
-		try {
-			const response = await fetch(
-				`https://api.spotify.com/v1/search?${body}`,
-				{
-					headers: {
-						Authorization: 'Bearer ' + localStorage.getItem('access-token'),
-					},
-				}
-			);
-			const string = await response.text();
-			const json = string === '' ? {} : JSON.parse(string);
-			console.log('search test', json);
-		} catch (err) {
-			console.log(err);
+	//console.log('params test', params);
+	console.log('results test', currentResults);
+	const handleSearch = async (e) => {
+		const allArr = ['artist', 'track', 'album', 'audiobook'];
+		if (e.keyCode === 13) {
+			const body = new URLSearchParams({
+				q: searchRef.current.value,
+				type: params.length > 0 ? params : allArr,
+				market: 'ES',
+			});
+			try {
+				const response = await fetch(
+					`https://api.spotify.com/v1/search?${body}`,
+					{
+						headers: {
+							Authorization: 'Bearer ' + localStorage.getItem('access-token'),
+						},
+					}
+				);
+				const string = await response.text();
+				const json = string === '' ? {} : JSON.parse(string);
+				setCurrentResults(json);
+				//console.log('search test', json);
+			} catch (err) {
+				console.log(err);
+			}
 		}
 	};
 	const handleReturn = (e) => {
 		console.log('code test', e.keyCode);
-	};
-	const handleSearchClick = () => {
-		console.log('fired');
-		searchRef.current.focus();
 	};
 	return (
 		<div className='navbar bg-base-100'>
@@ -45,19 +57,61 @@ export default function SearchBar({}) {
 
 				<input
 					ref={searchRef}
-					onClick={handleSearchClick}
-					tabIndex={0}
-					onKeyDown={(e) => handleReturn(e)}
+					onKeyDown={(e) => handleSearch(e)}
 					type='text'
 					placeholder='Search'
 					className='input input-bordered input-sm w-full'
 				/>
 
 				<div className='mt-2 gap-2 flex flex-row'>
-					<button className='btn btn-primary btn-sm'>Artist</button>
-					<button className='btn btn-primary btn-sm'>Album</button>
-					<button className='btn btn-primary btn-sm'>Song</button>
-					<button className='btn btn-primary btn-sm'>Audiobook</button>
+					<div className='flex'>
+						<span className='label-text mr-1'>Artist</span>
+						<input
+							type='checkbox'
+							checked={artistChecked}
+							onChange={() => {
+								setArtistChecked(!artistChecked);
+								addParams('artist');
+							}}
+							className='my-auto checkbox checkbox-accent'
+						/>
+					</div>
+					<div className='flex'>
+						<span className='label-text mr-1'>Album</span>
+						<input
+							type='checkbox'
+							checked={albumChecked}
+							onChange={() => {
+								setAlbumChecked(!albumChecked);
+								addParams('album');
+							}}
+							className='my-auto checkbox checkbox-accent'
+						/>
+					</div>
+					<div className='flex'>
+						<span className='label-text mr-1'>Track</span>
+						<input
+							type='checkbox'
+							checked={trackChecked}
+							onChange={() => {
+								setTrackChecked(!trackChecked);
+								addParams('track');
+							}}
+							className='my-auto checkbox checkbox-accent'
+						/>
+					</div>
+					<div className='flex'>
+						<span className='label-text mr-1'>Audiobook</span>
+						<input
+							type='checkbox'
+							checked={audiobookChecked}
+							onChange={() => {
+								setAudiobookChecked(!audiobookChecked);
+								addParams('audiobook');
+							}}
+							className='my-auto checkbox checkbox-accent'
+						/>
+					</div>
 				</div>
 			</div>
 		</div>
