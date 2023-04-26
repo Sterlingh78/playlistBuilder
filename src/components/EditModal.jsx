@@ -32,7 +32,7 @@ export default function EditModal({ currentPlaylist, handlePlaylist }) {
 		handlePlaylist(currentPlaylist.id);
 		return json;
 	};
-	console.log('toggle test', toggled);
+	//console.log('toggle test', toggled);
 	return (
 		<div>
 			<input

@@ -1,4 +1,4 @@
-export default function Albums({ searchData }) {
+export default function Albums({ searchData, handleAlbumClick }) {
 	return (
 		<div className='mb-8'>
 			{searchData?.albums ? (
@@ -10,8 +10,16 @@ export default function Albums({ searchData }) {
 				{searchData?.albums?.items.map((album, i) => {
 					return (
 						<div
+							onClick={() =>
+								handleAlbumClick(
+									album.id,
+									album.name,
+									album.artists[0].name,
+									album.images[0].url
+								)
+							}
 							key={i}
-							className='card w-96 bg-base-200 shadow-xl'
+							className='card w-96 bg-base-200 shadow-xl cursor-pointer hover:bg-base-100'
 						>
 							<figure className='px-10 pt-10'>
 								<img
@@ -22,6 +30,7 @@ export default function Albums({ searchData }) {
 							</figure>
 							<div className='card-body items-center text-left'>
 								<h2 className='card-title'>{album.name}</h2>
+								<h3>{album.artists[0].name}</h3>
 							</div>
 						</div>
 					);

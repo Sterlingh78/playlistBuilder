@@ -23,7 +23,7 @@ export default function SearchBar({
 		}
 	};
 	//console.log('params test', params);
-	console.log('results test', currentResults);
+	console.log('results state test', currentResults);
 	const handleSearch = async (e) => {
 		const allArr = ['artist', 'track', 'album', 'audiobook'];
 		if (e.keyCode === 13) {
