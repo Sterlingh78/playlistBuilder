@@ -1,4 +1,4 @@
-export default function Artists({ searchData }) {
+export default function Artists({ searchData, handleArtistClick }) {
 	return (
 		<div className='mb-8'>
 			{searchData?.artists ? (
@@ -11,6 +11,9 @@ export default function Artists({ searchData }) {
 					return (
 						<div
 							key={i}
+							onClick={() =>
+								handleArtistClick(artist.id, artist.name, artist.images[0].url)
+							}
 							className='card w-96 bg-base-200 shadow-xl'
 						>
 							<figure className='px-10 pt-10'>

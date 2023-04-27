@@ -1,10 +1,5 @@
-import { useState, useRef } from 'react';
-export default function SearchBar({
-	currentPlaylist,
-	handleDrawer,
-	passSearchData,
-	clearSearch,
-}) {
+import { useState, useRef, forwardRef } from 'react';
+const SearchBar = forwardRef(function SearchBar(props, ref) {
 	const [params, setParams] = useState([]);
 	const [artistChecked, setArtistChecked] = useState(false);
 	const [albumChecked, setAlbumChecked] = useState(false);
@@ -44,26 +39,21 @@ export default function SearchBar({
 				const string = await response.text();
 				const json = string === '' ? {} : JSON.parse(string);
 				setCurrentResults(json);
-				passSearchData(json);
+				props.passSearchData(json);
 				//console.log('search test', json);
 			} catch (err) {
 				console.log(err);
 			}
 		}
 	};
-	const handleReturn = (e) => {
-		console.log('code test', e.keyCode);
-	};
 	return (
-		<div className='navbar bg-base-100'>
+		<div
+			ref={ref}
+			className='navbar bg-base-100'
+		>
 			<div className='mx-auto flex flex-col'>
 				<div>
-					<a
-						onClick={handleDrawer}
-						className='btn btn-ghost normal-case text-xl'
-					>
-						{currentPlaylist.name}
-					</a>
+					<h1>{props.currentPlaylist.name}</h1>
 				</div>
 
 				<div className='relative'>
@@ -76,7 +66,7 @@ export default function SearchBar({
 					/>
 					<button
 						onClick={() => {
-							clearSearch();
+							props.clearSearch();
 							searchRef.current.value = '';
 						}}
 						type='button'
@@ -162,4 +152,5 @@ export default function SearchBar({
 			</div>
 		</div>
 	);
-}
+});
+export default SearchBar;

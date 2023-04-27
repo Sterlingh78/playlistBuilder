@@ -1,14 +1,8 @@
-import { useEffect } from 'react';
-
-export default function Album({ albumData }) {
-	setTimeout(() => {
-		console.log('fired 234234');
-		window.scroll(0, 0);
-	}, 1000);
+export default function Album({ albumData, timeConvert }) {
 	return (
 		<div className='hero min-h-screen bg-base-200'>
 			<div className='hero-content flex-col w-full'>
-				<div className='flex w-full text-center'>
+				<div className='flex text-center'>
 					<div className='flex flex-col items-center text-center h-full my-auto mr-8 break-words'>
 						<h1 className='text-6xl mx-auto mb-4'>{albumData.name}</h1>
 						<h2 className='text-4xl mx-auto'>{albumData.artist}</h2>
@@ -29,7 +23,10 @@ export default function Album({ albumData }) {
 									>
 										<div className='min-h-[72px] flex justify-between rounded-md'>
 											<span className='font-bold'>{track.name}</span>
-											<span>{track.artists[0].name}</span>
+											<div className='flex justify-between w-1/6'>
+												<span>{track.artists[0].name}</span>
+												<span>{timeConvert(track.duration_ms)}</span>
+											</div>
 										</div>
 									</li>
 								);

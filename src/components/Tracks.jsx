@@ -1,4 +1,4 @@
-export default function Tracks({ searchData }) {
+export default function Tracks({ searchData, timeConvert }) {
 	return (
 		<div className='w-full mb-8'>
 			{searchData?.tracks ? (
@@ -17,7 +17,10 @@ export default function Tracks({ searchData }) {
 								>
 									<div className='min-h-[72px] flex justify-between rounded-md'>
 										<span className='font-bold'>{track.name}</span>
-										<span>{track.artists[0].name}</span>
+										<div className='flex justify-between w-1/6'>
+											<span>{track.artists[0].name}</span>
+											<span>{timeConvert(track.duration_ms)}</span>
+										</div>
 									</div>
 								</li>
 							);

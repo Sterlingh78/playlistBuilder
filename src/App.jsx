@@ -24,10 +24,9 @@ function App() {
 		setOwnedPlaylists(ownedPlayListsData);
 		setCurrentState('playlists');
 	};
-	const handleBackArrow = () => {
+	const handleHomeClick = () => {
 		setCurrentState('playlists');
 	};
-	const addPlaylist = async () => {};
 	useEffect(() => {
 		const args = new URLSearchParams(window.location.search);
 		const code = args.get('code');
@@ -214,7 +213,6 @@ function App() {
 	} else if (currentState === 'playlistDetails' && currentPlaylist) {
 		content = (
 			<Details
-				handleBackArrow={handleBackArrow}
 				user={user}
 				currentPlaylist={currentPlaylist}
 				handlePlaylist={handlePlaylist}
@@ -225,7 +223,14 @@ function App() {
 	console.log('user info', user);
 	return (
 		<div>
-			{currentState !== 'login' ? <Navbar user={user} /> : ''}
+			{currentState !== 'login' ? (
+				<Navbar
+					handleHomeClick={handleHomeClick}
+					user={user}
+				/>
+			) : (
+				''
+			)}
 			{content}
 		</div>
 	);
