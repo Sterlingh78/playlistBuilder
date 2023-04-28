@@ -8,24 +8,28 @@ export default function AddModal({ getPlaylists, user }) {
 		if (nameRef.current.value === '' || descriptionRef.current.value === '') {
 			return;
 		}
-		const response = await fetch(
-			`https://api.spotify.com/v1/users/${user.id}/playlists`,
-			{
-				headers: {
-					Authorization: 'Bearer ' + localStorage.getItem('access-token'),
-				},
-				method: 'POST',
-				body: JSON.stringify({
-					name: nameRef.current.value,
-					description: descriptionRef.current.value,
-					public: toggled,
-				}),
-			}
-		);
-		const string = await response.text();
-		const json = string === '' ? {} : JSON.parse(string);
-		console.log('post test', json);
-		getPlaylists(user);
+		try {
+			const response = await fetch(
+				`https://api.spotify.com/v1/users/${user.id}/playlists`,
+				{
+					headers: {
+						Authorization: 'Bearer ' + localStorage.getItem('access-token'),
+					},
+					method: 'POST',
+					body: JSON.stringify({
+						name: nameRef.current.value,
+						description: descriptionRef.current.value,
+						public: false,
+					}),
+				}
+			);
+			const string = await response.text();
+			const json = string === '' ? {} : JSON.parse(string);
+			console.log('post test', json);
+			getPlaylists(user);
+		} catch (err) {
+			console.log(err);
+		}
 	};
 	return (
 		<div>

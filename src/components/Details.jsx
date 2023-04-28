@@ -13,6 +13,9 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 	const [currentState, setCurrentState] = useState(null);
 	const [albumData, setAlbumData] = useState(null);
 	const [artistData, setArtistData] = useState(null);
+	const [bannerStyle, setBannerStyle] = useState('');
+	const [bannerText, setBannerText] = useState('');
+	const [bannerVisible, setBannerVisible] = useState(false);
 	const search = useRef();
 	const timeConvert = (ms) => {
 		let totalSeconds = Math.floor(ms / 1000);
@@ -21,6 +24,15 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 		return `${minutes.toString().padStart(2, '0')}:${seconds
 			.toString()
 			.padStart(2, '0')}`;
+	};
+	const showAlert = (type, text) => {
+		const style = type === 'success' ? 'alert-success' : 'alert-error';
+		setBannerStyle(style);
+		setBannerText(text);
+		setBannerVisible(true);
+		setTimeout(() => {
+			setBannerVisible(false);
+		}, 2000);
 	};
 	const handleDrawer = () => {
 		if (!drawerOpen) {
@@ -37,27 +49,53 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 	const clearSearch = () => {
 		setSearchData(null);
 	};
+	const addTrack = async (uri) => {
+		const id = currentPlaylist.id;
+
+		try {
+			const response = await fetch(
+				`https://api.spotify.com/v1/playlists/${id}/tracks?uris=${uri}`,
+				{
+					headers: {
+						Authorization: 'Bearer ' + localStorage.getItem('access-token'),
+					},
+					method: 'POST',
+				}
+			);
+			const string = await response.text();
+			const json = string === '' ? {} : JSON.parse(string);
+			console.log('add test', json);
+			handlePlaylist(currentPlaylist.id);
+			showAlert('success', 'Song Added!');
+		} catch (err) {
+			console.log(err);
+		}
+	};
 	const handleAlbumClick = async (id, name, artist, imageUrl) => {
 		console.log('album id: ', id);
 
-		const response = await fetch(
-			`https://api.spotify.com/v1/albums/${id}/tracks?limit=50`,
-			{
-				headers: {
-					Authorization: 'Bearer ' + localStorage.getItem('access-token'),
-				},
-			}
-		);
-		const data = await response.json();
-		console.log('album test', data);
-		setAlbumData({
-			name: name,
-			artist: artist,
-			imageUrl: imageUrl,
-			items: data,
-		});
-		setCurrentState('album');
-		search.current.scrollIntoView();
+		try {
+			const response = await fetch(
+				`https://api.spotify.com/v1/albums/${id}/tracks?limit=50`,
+				{
+					headers: {
+						Authorization: 'Bearer ' + localStorage.getItem('access-token'),
+					},
+				}
+			);
+			const data = await response.json();
+			console.log('album test', data);
+			setAlbumData({
+				name: name,
+				artist: artist,
+				imageUrl: imageUrl,
+				items: data,
+			});
+			setCurrentState('album');
+			search.current.scrollIntoView();
+		} catch (err) {
+			console.log(err);
+		}
 	};
 	const getArtistData = async (id, name, imageUrl) => {
 		console.log('fired', id, name, imageUrl);
@@ -97,12 +135,13 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 		});
 		setCurrentState('artist');
 	};
-	function handleMouseMove(event) {
+	const handleMouseMove = (event) => {
+		// Check if mouse is touching left side of screen
 		if (event.clientX <= 10) {
-			// Check if mouse is on the left edge of the screen
 			handleDrawer();
 		}
-	}
+	};
+
 	window.addEventListener('mousemove', handleMouseMove);
 	let content;
 	if (currentState === null) {
@@ -111,6 +150,7 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 		content = (
 			<div>
 				<Tracks
+					addTrack={addTrack}
 					timeConvert={timeConvert}
 					searchData={searchData}
 				/>
@@ -143,6 +183,7 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 	return (
 		<div>
 			<EditModal
+				showAlert={showAlert}
 				currentPlaylist={currentPlaylist}
 				handlePlaylist={handlePlaylist}
 			/>
@@ -155,6 +196,28 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 					className='drawer-toggle'
 				/>
 				<div className='drawer-content'>
+					<div
+						className={`alert ${bannerStyle} fixed top-0 z-50 shadow-lg mx-auto ${
+							bannerVisible ? '' : 'hidden'
+						}`}
+					>
+						<div>
+							<svg
+								xmlns='http://www.w3.org/2000/svg'
+								className='stroke-current flex-shrink-0 h-6 w-6'
+								fill='none'
+								viewBox='0 0 24 24'
+							>
+								<path
+									strokeLinecap='round'
+									strokeLinejoin='round'
+									strokeWidth='2'
+									d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+								/>
+							</svg>
+							<span>{bannerText}</span>
+						</div>
+					</div>
 					<SearchBar
 						ref={search}
 						handleDrawer={handleDrawer}

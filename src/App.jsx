@@ -9,23 +9,32 @@ function App() {
 	const [ownedPlaylists, setOwnedPlaylists] = useState(null);
 	const [currentPlaylist, setCurrentPlaylist] = useState(null);
 	const [currentState, setCurrentState] = useState('login');
+	const [theme, setTheme] = useState(localStorage.getItem('theme'));
 	const getPlaylists = async (user) => {
-		const response = await fetch(`https://api.spotify.com/v1/me/playlists`, {
-			headers: {
-				Authorization: 'Bearer ' + localStorage.getItem('access-token'),
-			},
-		});
-		const data = await response.json();
-		console.log('playlist test', data);
-		const ownedPlayListsData = data.items.filter(
-			(playlist) => playlist.owner.display_name === user.display_name
-		);
-		console.log('owned test', ownedPlayListsData);
-		setOwnedPlaylists(ownedPlayListsData);
-		setCurrentState('playlists');
+		try {
+			const response = await fetch(`https://api.spotify.com/v1/me/playlists`, {
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('access-token'),
+				},
+			});
+			const data = await response.json();
+			console.log('playlist test', data);
+			const ownedPlayListsData = data.items.filter(
+				(playlist) => playlist.owner.display_name === user.display_name
+			);
+			console.log('owned test', ownedPlayListsData);
+			setOwnedPlaylists(ownedPlayListsData);
+			setCurrentState('playlists');
+		} catch (err) {
+			console.log(err);
+		}
 	};
 	const handleHomeClick = () => {
 		setCurrentState('playlists');
+	};
+	const changeTheme = (theme) => {
+		localStorage.setItem('theme', theme);
+		setTheme(localStorage.getItem('theme'));
 	};
 	useEffect(() => {
 		const args = new URLSearchParams(window.location.search);
@@ -72,23 +81,27 @@ function App() {
 				});
 
 			async function getProfile(accessToken) {
-				const response = await fetch('https://api.spotify.com/v1/me', {
-					headers: {
-						Authorization: 'Bearer ' + accessToken,
-					},
-				});
+				try {
+					const response = await fetch('https://api.spotify.com/v1/me', {
+						headers: {
+							Authorization: 'Bearer ' + accessToken,
+						},
+					});
 
-				const data = await response.json();
-				console.log('profile received:', data);
-				setUser(data);
-				getPlaylists(data);
+					const data = await response.json();
+					console.log('profile received:', data);
+					setUser(data);
+					getPlaylists(data);
 
-				window.history.replaceState({}, document.title, '/');
+					window.history.replaceState({}, document.title, '/');
+				} catch (err) {
+					console.log(err);
+				}
 			}
 		}
 	}, []);
 	const handleLogIn = async () => {
-		localStorage.clear();
+		//localStorage.clear();
 		const generateRandomString = (length) => {
 			let text = '';
 			let possible =
@@ -115,7 +128,7 @@ function App() {
 		}
 
 		const clientId = 'ad6bc57077394221908d7a4e65f027d4';
-		const redirectUri = 'https://incandescent-kataifi-e16b89.netlify.app/';
+		const redirectUri = 'http://localhost:5173/';
 		localStorage.setItem('clientId', clientId);
 		localStorage.setItem('redirectUri', redirectUri);
 
@@ -150,27 +163,36 @@ function App() {
 		if (i.length > 2) {
 			url = `https://api.spotify.com/v1/playlists/${i}`;
 		} else url = `https://api.spotify.com/v1/playlists/${ownedPlaylists[i].id}`;
-		const response = await fetch(url, {
-			headers: {
-				Authorization: 'Bearer ' + localStorage.getItem('access-token'),
-			},
-		});
-		const data = await response.json();
-		return data;
+
+		try {
+			const response = await fetch(url, {
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('access-token'),
+				},
+			});
+			const data = await response.json();
+			return data;
+		} catch (err) {
+			console.log(err);
+		}
 	};
 	let itemsArr = [];
 	const fetchTracks = async (link) => {
-		const response = await fetch(`${link}`, {
-			headers: {
-				Authorization: 'Bearer ' + localStorage.getItem('access-token'),
-			},
-		});
-		const data = await response.json();
-		itemsArr = [...itemsArr, ...data.items];
-		if (data.next !== null) {
-			return fetchTracks(data.next);
-		} else {
-			return itemsArr;
+		try {
+			const response = await fetch(`${link}`, {
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('access-token'),
+				},
+			});
+			const data = await response.json();
+			itemsArr = [...itemsArr, ...data.items];
+			if (data.next !== null) {
+				return fetchTracks(data.next);
+			} else {
+				return itemsArr;
+			}
+		} catch (err) {
+			console.log(err);
 		}
 	};
 	const handlePlaylist = async (i) => {
@@ -213,6 +235,7 @@ function App() {
 	} else if (currentState === 'playlistDetails' && currentPlaylist) {
 		content = (
 			<Details
+				getPlaylists={getPlaylists}
 				user={user}
 				currentPlaylist={currentPlaylist}
 				handlePlaylist={handlePlaylist}
@@ -222,9 +245,11 @@ function App() {
 	console.log('Playlist State Populated', currentPlaylist);
 	console.log('user info', user);
 	return (
-		<div>
+		<div data-theme={theme}>
 			{currentState !== 'login' ? (
 				<Navbar
+					changeTheme={changeTheme}
+					theme={theme}
 					handleHomeClick={handleHomeClick}
 					user={user}
 				/>

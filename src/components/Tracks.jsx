@@ -1,4 +1,4 @@
-export default function Tracks({ searchData, timeConvert }) {
+export default function Tracks({ searchData, timeConvert, addTrack }) {
 	return (
 		<div className='w-full mb-8'>
 			{searchData?.tracks ? (
@@ -14,6 +14,7 @@ export default function Tracks({ searchData, timeConvert }) {
 								<li
 									key={i}
 									className='bg-base-100 rounded-md'
+									onClick={() => addTrack(track.uri)}
 								>
 									<div className='min-h-[72px] flex justify-between rounded-md'>
 										<span className='font-bold'>{track.name}</span>
