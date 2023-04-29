@@ -1,11 +1,7 @@
 export default function Albums({ searchData, handleAlbumClick, alone }) {
 	return (
 		<div className={` ${alone ? 'mt-8' : 'mt-1 ml-1'} mr-8 mb-8 rounded-2xl`}>
-			<div
-				className={`flex gap-2 flex-wrap align-middle ${
-					alone ? 'justify-center' : ''
-				}`}
-			>
+			<div className={`flex gap-2 flex-wrap align-middle justify-center`}>
 				{searchData?.albums?.items.map((album, i) => {
 					return (
 						<div

@@ -217,12 +217,12 @@ function App() {
 				<div className='hero-content'>
 					<div className='flex flex-col text-center'>
 						<h1 className='mb-4 font-bold text-6xl text-[hsl(var(--p))]'>
-							Welcome to Spotify playlistBuilder!
+							Spotify playlistBuilder
 						</h1>
 						<h2 className='mb-8 text-2xl'>Login to Spotify below to begin.</h2>
 						<button
 							onClick={handleLogIn}
-							className='btn btn-primary btn-outline w-1/3 mx-auto'
+							className='btn btn-primary btn-outline w-1/4 mx-auto'
 						>
 							Spotify Log In
 						</button>

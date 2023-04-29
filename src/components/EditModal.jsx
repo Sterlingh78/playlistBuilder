@@ -49,30 +49,29 @@ export default function EditModal({
 			/>
 			<div className='modal'>
 				<div className='modal-box text-center'>
-					<h2>Playlist Edit</h2>
+					<h2 className='text-3xl text-[hsl(var(--p))] mb-2'>Edit Playlist</h2>
 					<input
 						ref={nameRef}
 						type='text'
-						placeholder='Name...'
+						placeholder='Name'
 						className='input input-bordered w-full max-w-xs mt-2'
 					/>
-					<input
+					<textarea
 						ref={descriptionRef}
-						type='text'
-						placeholder='Description...'
-						className='input input-bordered w-full max-w-xs mt-2'
-					/>
-					<div className='flex justify-center mt-2 gap-2'>
+						className='textarea textarea-bordered w-full max-w-xs mt-2'
+						placeholder='Description'
+					></textarea>
+					<div className='flex justify-center mt-4 gap-2'>
 						<label
 							htmlFor='my-modal'
-							className='btn'
+							className='btn btn-primary btn-outline'
 							onClick={handleEdit}
 						>
 							Save
 						</label>
 						<label
 							htmlFor='my-modal'
-							className='btn'
+							className='btn btn-primary btn-outline'
 						>
 							Cancel
 						</label>

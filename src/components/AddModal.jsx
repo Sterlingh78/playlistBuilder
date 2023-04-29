@@ -38,31 +38,32 @@ export default function AddModal({ getPlaylists, user }) {
 				className='modal-toggle'
 			/>
 			<div className='modal'>
-				<div className='modal-box text-center'>
-					<h2>Create Playlist</h2>
+				<div className='modal-box text-center bg-base-100'>
+					<h2 className='text-3xl text-[hsl(var(--p))] mb-2'>
+						Create Playlist
+					</h2>
 					<input
 						ref={nameRef}
 						type='text'
-						placeholder='Name...'
+						placeholder='Name'
 						className='input input-bordered w-full max-w-xs mt-2'
 					/>
-					<input
+					<textarea
 						ref={descriptionRef}
-						type='text'
-						placeholder='Description...'
-						className='input input-bordered w-full max-w-xs mt-2'
-					/>
-					<div className='flex justify-center mt-2 gap-2'>
+						className='textarea textarea-bordered w-full max-w-xs mt-2'
+						placeholder='Description'
+					></textarea>
+					<div className='flex justify-center mt-4 gap-2'>
 						<label
 							onClick={createPlaylist}
 							htmlFor='my-modal'
-							className='btn'
+							className='btn btn-primary btn-outline'
 						>
 							Save
 						</label>
 						<label
 							htmlFor='my-modal'
-							className='btn'
+							className='btn btn-primary btn-outline'
 						>
 							Cancel
 						</label>
