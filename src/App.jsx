@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import PlaylistList from './components/PlaylistList';
 import Details from './components/Details';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 //import './App.css';
 
 function App() {
@@ -214,12 +215,18 @@ function App() {
 		content = (
 			<div className='hero min-h-screen'>
 				<div className='hero-content'>
-					<button
-						onClick={handleLogIn}
-						className='btn btn-primary'
-					>
-						Spotify Log In
-					</button>
+					<div className='flex flex-col text-center'>
+						<h1 className='mb-4 font-bold text-6xl text-[hsl(var(--p))]'>
+							Welcome to Spotify playlistBuilder!
+						</h1>
+						<h2 className='mb-8 text-2xl'>Login to Spotify below to begin.</h2>
+						<button
+							onClick={handleLogIn}
+							className='btn btn-primary btn-outline w-1/3 mx-auto'
+						>
+							Spotify Log In
+						</button>
+					</div>
 				</div>
 			</div>
 		);
@@ -257,6 +264,7 @@ function App() {
 				''
 			)}
 			{content}
+			<Footer />
 		</div>
 	);
 }

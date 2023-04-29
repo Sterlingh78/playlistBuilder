@@ -17,8 +17,6 @@ const SearchBar = forwardRef(function SearchBar(props, ref) {
 			setParams((prevState) => [...prevState, param]);
 		}
 	};
-	//console.log('params test', params);
-	console.log('results state test', currentResults);
 	const handleSearch = async (e) => {
 		const allArr = ['artist', 'track', 'album', 'audiobook'];
 		if (e.keyCode === 13) {
@@ -26,6 +24,7 @@ const SearchBar = forwardRef(function SearchBar(props, ref) {
 				q: searchRef.current.value,
 				type: params.length > 0 ? params : allArr,
 				market: 'ES',
+				limit: 10,
 			});
 			try {
 				const response = await fetch(
@@ -40,7 +39,7 @@ const SearchBar = forwardRef(function SearchBar(props, ref) {
 				const json = string === '' ? {} : JSON.parse(string);
 				setCurrentResults(json);
 				props.passSearchData(json);
-				//console.log('search test', json);
+				console.log('search data', json);
 			} catch (err) {
 				console.log(err);
 			}
@@ -51,18 +50,14 @@ const SearchBar = forwardRef(function SearchBar(props, ref) {
 			ref={ref}
 			className='navbar bg-base-100'
 		>
-			<div className='mx-auto flex flex-col'>
-				<div>
-					<h1>{props.currentPlaylist.name}</h1>
-				</div>
-
+			<div className='mx-auto flex flex-col items-stretch w-1/2'>
 				<div className='relative'>
 					<input
 						ref={searchRef}
 						onKeyDown={(e) => handleSearch(e)}
 						type='text'
 						placeholder='Search'
-						className='input input-bordered input-sm w-full'
+						className='input input-bordered w-full'
 					/>
 					<button
 						onClick={() => {
@@ -78,7 +73,7 @@ const SearchBar = forwardRef(function SearchBar(props, ref) {
 							height='17'
 							viewBox='0 0 24 24'
 							fill='none'
-							stroke='#000000'
+							stroke='currentColor'
 							strokeWidth='2'
 							strokeLinecap='round'
 							strokeLinejoin='round'
@@ -99,9 +94,9 @@ const SearchBar = forwardRef(function SearchBar(props, ref) {
 					</button>
 				</div>
 
-				<div className='mt-2 gap-2 flex flex-row'>
+				<div className='mt-2 gap-4 flex justify-center'>
 					<div className='flex'>
-						<span className='label-text mr-1'>Artist</span>
+						<span className='font-bold mr-1'>ARTIST</span>
 						<input
 							type='checkbox'
 							checked={artistChecked}
@@ -109,11 +104,11 @@ const SearchBar = forwardRef(function SearchBar(props, ref) {
 								setArtistChecked(!artistChecked);
 								addParams('artist');
 							}}
-							className='my-auto checkbox checkbox-accent'
+							className='my-auto w-[1.2rem] h-[1.2rem] checkbox checkbox-primary'
 						/>
 					</div>
 					<div className='flex'>
-						<span className='label-text mr-1'>Album</span>
+						<span className='font-bold mr-1'>ALBUM</span>
 						<input
 							type='checkbox'
 							checked={albumChecked}
@@ -121,11 +116,11 @@ const SearchBar = forwardRef(function SearchBar(props, ref) {
 								setAlbumChecked(!albumChecked);
 								addParams('album');
 							}}
-							className='my-auto checkbox checkbox-accent'
+							className='my-auto w-[1.2rem] h-[1.2rem] checkbox checkbox-primary'
 						/>
 					</div>
 					<div className='flex'>
-						<span className='label-text mr-1'>Track</span>
+						<span className='font-bold mr-1'>TRACK</span>
 						<input
 							type='checkbox'
 							checked={trackChecked}
@@ -133,19 +128,7 @@ const SearchBar = forwardRef(function SearchBar(props, ref) {
 								setTrackChecked(!trackChecked);
 								addParams('track');
 							}}
-							className='my-auto checkbox checkbox-accent'
-						/>
-					</div>
-					<div className='flex'>
-						<span className='label-text mr-1'>Audiobook</span>
-						<input
-							type='checkbox'
-							checked={audiobookChecked}
-							onChange={() => {
-								setAudiobookChecked(!audiobookChecked);
-								addParams('audiobook');
-							}}
-							className='my-auto checkbox checkbox-accent'
+							className='my-auto w-[1.2rem] h-[1.2rem] checkbox checkbox-primary'
 						/>
 					</div>
 				</div>

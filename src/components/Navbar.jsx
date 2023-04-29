@@ -61,10 +61,7 @@ export default function Navbar({ user, handleHomeClick, changeTheme, theme }) {
 							</a>
 						</li>
 					</ul>
-					<label
-						tabIndex={0}
-						className='btn btn-ghost btn-circle avatar'
-					>
+					<label className='btn btn-ghost btn-circle avatar'>
 						<div className='w-10 rounded-full'>
 							<img src={user.images[0].url} />
 						</div>

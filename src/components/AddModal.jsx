@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 export default function AddModal({ getPlaylists, user }) {
-	const [toggled, setToggled] = useState(true);
 	const nameRef = useRef(null);
 	const descriptionRef = useRef(null);
 
@@ -53,16 +52,6 @@ export default function AddModal({ getPlaylists, user }) {
 						placeholder='Description...'
 						className='input input-bordered w-full max-w-xs mt-2'
 					/>
-					<div className='form-control w-52 mx-auto'>
-						<div className='cursor-pointer'>
-							<span className='label-text'>Private Playlist</span>
-							<input
-								onChange={() => setToggled(!toggled)}
-								type='checkbox'
-								className='checkbox'
-							/>
-						</div>
-					</div>
 					<div className='flex justify-center mt-2 gap-2'>
 						<label
 							onClick={createPlaylist}

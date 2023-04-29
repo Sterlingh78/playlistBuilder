@@ -1,6 +1,6 @@
-export default function Album({ albumData, timeConvert }) {
+export default function Album({ albumData, timeConvert, addTrack }) {
 	return (
-		<div className='hero min-h-screen bg-base-200'>
+		<div className='hero min-h-screen bg-base-100'>
 			<div className='hero-content flex-col w-full'>
 				<div className='flex text-center'>
 					<div className='flex flex-col items-center text-center h-full my-auto mr-8 break-words'>
@@ -18,6 +18,7 @@ export default function Album({ albumData, timeConvert }) {
 							{albumData?.items?.items?.map((track, i) => {
 								return (
 									<li
+										onClick={() => addTrack(track.uri)}
 										key={i}
 										className='bg-base-100 rounded-md'
 									>

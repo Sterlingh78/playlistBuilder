@@ -1,12 +1,11 @@
-export default function Albums({ searchData, handleAlbumClick }) {
+export default function Albums({ searchData, handleAlbumClick, alone }) {
 	return (
-		<div className='mb-8'>
-			{searchData?.albums ? (
-				<h2 className='ml-48 mb-2 text-3xl font-semibold'>Albums</h2>
-			) : (
-				''
-			)}
-			<div className='flex gap-4 flex-wrap align-middle justify-center'>
+		<div className={` ${alone ? 'mt-8' : 'mt-1 ml-1'} mr-8 mb-8 rounded-2xl`}>
+			<div
+				className={`flex gap-2 flex-wrap align-middle ${
+					alone ? 'justify-center' : ''
+				}`}
+			>
 				{searchData?.albums?.items.map((album, i) => {
 					return (
 						<div
@@ -19,7 +18,7 @@ export default function Albums({ searchData, handleAlbumClick }) {
 								)
 							}
 							key={i}
-							className='card w-96 bg-base-200 shadow-xl cursor-pointer hover:bg-base-100'
+							className={`card w-72 cursor-pointer hover:bg-base-200`}
 						>
 							<figure className='px-10 pt-10'>
 								<img
@@ -28,7 +27,7 @@ export default function Albums({ searchData, handleAlbumClick }) {
 									className='rounded-xl'
 								/>
 							</figure>
-							<div className='card-body items-center text-left'>
+							<div className='card-body items-center text-center'>
 								<h2 className='card-title'>{album.name}</h2>
 								<h3>{album.artists[0].name}</h3>
 							</div>

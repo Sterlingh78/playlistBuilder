@@ -16,7 +16,14 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 	const [bannerStyle, setBannerStyle] = useState('');
 	const [bannerText, setBannerText] = useState('');
 	const [bannerVisible, setBannerVisible] = useState(false);
+	const [hovered, setHovered] = useState(null);
 	const search = useRef();
+	const handleTrackMouseOver = (index) => {
+		setHovered(index);
+	};
+	const handleTrackMouseLeave = () => {
+		setHovered(null);
+	};
 	const timeConvert = (ms) => {
 		let totalSeconds = Math.floor(ms / 1000);
 		let minutes = Math.floor(totalSeconds / 60);
@@ -48,6 +55,7 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 	};
 	const clearSearch = () => {
 		setSearchData(null);
+		setCurrentState('search');
 	};
 	const addTrack = async (uri) => {
 		const id = currentPlaylist.id;
@@ -67,6 +75,30 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 			console.log('add test', json);
 			handlePlaylist(currentPlaylist.id);
 			showAlert('success', 'Song Added!');
+		} catch (err) {
+			console.log(err);
+		}
+	};
+	const removeTrack = async (uri) => {
+		const id = currentPlaylist.id;
+		try {
+			const response = await fetch(
+				`https://api.spotify.com/v1/playlists/${id}/tracks`,
+				{
+					headers: {
+						Authorization: 'Bearer ' + localStorage.getItem('access-token'),
+					},
+					method: 'DELETE',
+					body: JSON.stringify({
+						tracks: [{ uri: uri }],
+					}),
+				}
+			);
+			const string = await response.text();
+			const json = string === '' ? {} : JSON.parse(string);
+			console.log('delete test', json);
+			handlePlaylist(currentPlaylist.id);
+			showAlert('success', 'Song Deleted!');
 		} catch (err) {
 			console.log(err);
 		}
@@ -134,11 +166,13 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 			albums: data[1].items,
 		});
 		setCurrentState('artist');
+		search.current.scrollIntoView();
 	};
 	const handleMouseMove = (event) => {
 		// Check if mouse is touching left side of screen
 		if (event.clientX <= 10) {
 			handleDrawer();
+			console.log('tpuched');
 		}
 	};
 
@@ -147,26 +181,151 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 	if (currentState === null) {
 		content = '';
 	} else if (currentState === 'search') {
-		content = (
-			<div>
-				<Tracks
-					addTrack={addTrack}
-					timeConvert={timeConvert}
-					searchData={searchData}
-				/>
-				<Artists
-					handleArtistClick={handleArtistClick}
-					searchData={searchData}
-				/>
-				<Albums
-					handleAlbumClick={handleAlbumClick}
-					searchData={searchData}
-				/>
-			</div>
-		);
+		if (searchData !== null) {
+			if (
+				searchData.hasOwnProperty('artists') &&
+				searchData.hasOwnProperty('albums') &&
+				searchData.hasOwnProperty('tracks')
+			) {
+				content = (
+					<div className='flex w-full'>
+						<div className='w-[25%] '>
+							<Artists
+								alone={false}
+								handleArtistClick={handleArtistClick}
+								searchData={searchData}
+							/>
+						</div>
+						<div className='w-[75%] flex flex-col'>
+							<Tracks
+								alone={false}
+								addTrack={addTrack}
+								timeConvert={timeConvert}
+								searchData={searchData}
+							/>
+							<Albums
+								handleAlbumClick={handleAlbumClick}
+								searchData={searchData}
+							/>
+						</div>
+					</div>
+				);
+			} else if (
+				searchData.hasOwnProperty('tracks') &&
+				!searchData.hasOwnProperty('artists') &&
+				!searchData.hasOwnProperty('albums')
+			) {
+				content = (
+					<div className=' w-1/2 mx-auto'>
+						<Tracks
+							alone={true}
+							addTrack={addTrack}
+							timeConvert={timeConvert}
+							searchData={searchData}
+						/>
+					</div>
+				);
+			} else if (
+				searchData.hasOwnProperty('artists') &&
+				!searchData.hasOwnProperty('albums') &&
+				!searchData.hasOwnProperty('tracks')
+			) {
+				content = (
+					<div className='mx-auto'>
+						<Artists
+							alone={true}
+							handleArtistClick={handleArtistClick}
+							searchData={searchData}
+						/>
+					</div>
+				);
+			} else if (
+				searchData.hasOwnProperty('albums') &&
+				!searchData.hasOwnProperty('artists') &&
+				!searchData.hasOwnProperty('tracks')
+			) {
+				content = (
+					<div className='w-3/4 mx-auto'>
+						<Albums
+							alone={true}
+							handleAlbumClick={handleAlbumClick}
+							searchData={searchData}
+						/>
+					</div>
+				);
+			} else if (
+				searchData.hasOwnProperty('albums') &&
+				searchData.hasOwnProperty('artists') &&
+				!searchData.hasOwnProperty('tracks')
+			) {
+				content = (
+					<div className='flex ml-8'>
+						<Artists
+							alone={true}
+							handleArtistClick={handleArtistClick}
+							searchData={searchData}
+						/>
+						<Albums
+							alone={true}
+							handleAlbumClick={handleAlbumClick}
+							searchData={searchData}
+						/>
+					</div>
+				);
+			} else if (
+				searchData.hasOwnProperty('tracks') &&
+				searchData.hasOwnProperty('artists') &&
+				!searchData.hasOwnProperty('albums')
+			) {
+				content = (
+					<div className='flex w-full'>
+						<div className='w-[25%] '>
+							<Artists
+								alone={false}
+								handleArtistClick={handleArtistClick}
+								searchData={searchData}
+							/>
+						</div>
+						<div className='w-[75%]'>
+							<Tracks
+								alone={true}
+								addTrack={addTrack}
+								timeConvert={timeConvert}
+								searchData={searchData}
+							/>
+						</div>
+					</div>
+				);
+			} else if (
+				searchData.hasOwnProperty('tracks') &&
+				searchData.hasOwnProperty('albums') &&
+				!searchData.hasOwnProperty('artists')
+			) {
+				content = (
+					<div className='flex'>
+						<div className='w-[40%] ml-8'>
+							<Tracks
+								alone={true}
+								addTrack={addTrack}
+								timeConvert={timeConvert}
+								searchData={searchData}
+							/>
+						</div>
+						<div className='w-[60%]'>
+							<Albums
+								alone={true}
+								handleAlbumClick={handleAlbumClick}
+								searchData={searchData}
+							/>
+						</div>
+					</div>
+				);
+			}
+		}
 	} else if (currentState === 'album') {
 		content = (
 			<Album
+				addTrack={addTrack}
 				timeConvert={timeConvert}
 				albumData={albumData}
 			/>
@@ -174,6 +333,7 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 	} else if (currentState === 'artist') {
 		content = (
 			<Artist
+				addTrack={addTrack}
 				artistData={artistData}
 				timeConvert={timeConvert}
 				handleAlbumClick={handleAlbumClick}
@@ -220,7 +380,6 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 					</div>
 					<SearchBar
 						ref={search}
-						handleDrawer={handleDrawer}
 						currentPlaylist={currentPlaylist}
 						passSearchData={passSearchData}
 						clearSearch={clearSearch}
@@ -235,27 +394,77 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 					></label>
 					<ul
 						onMouseLeave={handleMouseLeave}
-						className='menu p-4 w-80 bg-base-100 text-base-content'
+						className='menu w-80 bg-base-100 text-base-content'
 					>
-						<div>
-							<h1 className='ml-2 text-xl my-auto font-bold'>
-								{currentPlaylist.name}
-							</h1>
-							<p className='mb-4'>{currentPlaylist.description}</p>
-							<label
-								htmlFor='my-modal'
-								className=' btn btn-sm btn-primary mb-6'
-							>
-								Edit
-							</label>
+						<div className='p-4 bg-base-200 mb-2'>
+							<div className='flex justify-between items-center mb-4'>
+								<h1 className=' text-3xl text-[hsl(var(--p))] my-auto font-bold'>
+									{currentPlaylist.name}
+								</h1>
+								<label
+									htmlFor='my-modal'
+									className='btn btn-outline btn-primary btn-sm'
+								>
+									<svg
+										xmlns='http://www.w3.org/2000/svg'
+										width='17'
+										height='17'
+										viewBox='0 0 24 24'
+										fill='none'
+										stroke='currentColor'
+										strokeWidth='2'
+										strokeLinecap='round'
+										strokeLinejoin='round'
+									>
+										<polygon points='16 3 21 8 8 21 3 21 3 16 16 3'></polygon>
+									</svg>
+								</label>
+							</div>
+							<p className='mb-4 font-semibold'>
+								{currentPlaylist.description}
+							</p>
 						</div>
-						{currentPlaylist.tracks.map((trackObj, i) => {
-							return (
-								<li key={i}>
-									<a>{trackObj?.track?.name}</a>
-								</li>
-							);
-						})}
+						<div className='p-4'>
+							{currentPlaylist.tracks.map((trackObj, i) => {
+								return (
+									<div
+										key={i}
+										onMouseOver={() => handleTrackMouseOver(i)}
+										onMouseLeave={handleTrackMouseLeave}
+										className='flex'
+									>
+										<li className={` ${hovered === i ? 'w-5/6' : 'w-full'}`}>
+											<a className='rounded-md'>{trackObj?.track?.name}</a>
+										</li>
+										<label
+											onClick={() => removeTrack(trackObj?.track?.uri)}
+											className={`${
+												hovered === i ? 'w-1/6' : 'hidden'
+											} btn btn-outline btn-secondary ml-1 my-auto`}
+										>
+											<svg
+												xmlns='http://www.w3.org/2000/svg'
+												width='24'
+												height='24'
+												viewBox='0 0 24 24'
+												fill='none'
+												stroke='hsl(var(--s))'
+												strokeWidth='2'
+												strokeLinecap='round'
+												strokeLinejoin='round'
+											>
+												<line
+													x1='5'
+													y1='12'
+													x2='19'
+													y2='12'
+												></line>
+											</svg>
+										</label>
+									</div>
+								);
+							})}
+						</div>
 					</ul>
 				</div>
 			</div>
