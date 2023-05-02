@@ -14,7 +14,7 @@ export default function Artist({
 						</h1>
 					</div>
 					<img
-						src={artistData.imageUrl}
+						src={artistData?.imageUrl}
 						className='max-w-lg rounded-lg'
 					/>
 				</div>
