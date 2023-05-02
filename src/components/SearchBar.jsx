@@ -39,7 +39,7 @@ const SearchBar = forwardRef(function SearchBar(props, ref) {
 				const json = string === '' ? {} : JSON.parse(string);
 				setCurrentResults(json);
 				props.passSearchData(json);
-				console.log('search data', json);
+				//console.log('search data', json);
 			} catch (err) {
 				console.log(err);
 			}

@@ -31,7 +31,7 @@ export default function EditModal({
 			);
 			const string = await response.text();
 			const json = string === '' ? {} : JSON.parse(string);
-			console.log('put test', json);
+			//('put test', json);
 			handlePlaylist(currentPlaylist.id);
 			showAlert('success', 'Playlist Saved!');
 			return json;

@@ -24,7 +24,7 @@ export default function AddModal({ getPlaylists, user }) {
 			);
 			const string = await response.text();
 			const json = string === '' ? {} : JSON.parse(string);
-			console.log('post test', json);
+			//console.log('post test', json);
 			getPlaylists(user);
 		} catch (err) {
 			console.log(err);

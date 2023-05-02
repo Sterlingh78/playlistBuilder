@@ -72,7 +72,7 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 			);
 			const string = await response.text();
 			const json = string === '' ? {} : JSON.parse(string);
-			console.log('add test', json);
+			//console.log('add test', json);
 			handlePlaylist(currentPlaylist.id);
 			showAlert('success', 'Song Added!');
 		} catch (err) {
@@ -96,7 +96,7 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 			);
 			const string = await response.text();
 			const json = string === '' ? {} : JSON.parse(string);
-			console.log('delete test', json);
+			//console.log('delete test', json);
 			handlePlaylist(currentPlaylist.id);
 			showAlert('success', 'Song Deleted!');
 		} catch (err) {
@@ -104,7 +104,7 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 		}
 	};
 	const handleAlbumClick = async (id, name, artist, imageUrl) => {
-		console.log('album id: ', id);
+		//console.log('album id: ', id);
 
 		try {
 			const response = await fetch(
@@ -116,7 +116,7 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 				}
 			);
 			const data = await response.json();
-			console.log('album test', data);
+			//console.log('album test', data);
 			setAlbumData({
 				name: name,
 				artist: artist,
@@ -130,7 +130,7 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 		}
 	};
 	const getArtistData = async (id, name, imageUrl) => {
-		console.log('fired', id, name, imageUrl);
+		//console.log('fired', id, name, imageUrl);
 		return Promise.all([
 			fetch(`https://api.spotify.com/v1/artists/${id}/top-tracks?market=ES`, {
 				headers: {
@@ -148,15 +148,15 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 			)
 			.then((data) => {
 				const [data1, data2] = data;
-				console.log('Data from URL 1:', data1);
-				console.log('Data from URL 2:', data2);
+				//console.log('Data from URL 1:', data1);
+				//console.log('Data from URL 2:', data2);
 				return data;
 			})
 			.catch((error) => console.error(error));
 	};
 	const handleArtistClick = async (id, name, imageUrl) => {
 		const data = await getArtistData(id, name, imageUrl);
-		console.log('combined', data);
+		//console.log('combined', data);
 
 		setArtistData({
 			id: id,
@@ -172,7 +172,7 @@ export default function Details({ currentPlaylist, handlePlaylist }) {
 		// Check if mouse is touching left side of screen
 		if (event.clientX <= 10) {
 			handleDrawer();
-			console.log('tpuched');
+			//console.log('tpuched');
 		}
 	};
 

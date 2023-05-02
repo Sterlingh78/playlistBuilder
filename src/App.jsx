@@ -19,11 +19,11 @@ function App() {
 				},
 			});
 			const data = await response.json();
-			console.log('playlist test', data);
+			//console.log('playlist test', data);
 			const ownedPlayListsData = data.items.filter(
 				(playlist) => playlist.owner.display_name === user.display_name
 			);
-			console.log('owned test', ownedPlayListsData);
+			//console.log('owned test', ownedPlayListsData);
 			setOwnedPlaylists(ownedPlayListsData);
 			setCurrentState('playlists');
 		} catch (err) {
@@ -54,7 +54,7 @@ function App() {
 				client_id: clientId,
 				code_verifier: codeVerifier,
 			});
-			console.log('body test', body.toString());
+			//console.log('body test', body.toString());
 
 			const response = fetch('https://accounts.spotify.com/api/token', {
 				method: 'POST',
@@ -90,7 +90,7 @@ function App() {
 					});
 
 					const data = await response.json();
-					console.log('profile received:', data);
+					//console.log('profile received:', data);
 					setUser(data);
 					getPlaylists(data);
 
@@ -156,7 +156,7 @@ function App() {
 			window.location = 'https://accounts.spotify.com/authorize?' + args;
 		});
 		if (window.location.search) {
-			console.log('redirected');
+			//console.log('redirected');
 		}
 	};
 	const fetchPlaylist = async (i) => {
@@ -249,8 +249,8 @@ function App() {
 			/>
 		);
 	}
-	console.log('Playlist State Populated', currentPlaylist);
-	console.log('user info', user);
+	//console.log('Playlist State Populated', currentPlaylist);
+	//console.log('user info', user);
 	return (
 		<div data-theme={theme}>
 			{currentState !== 'login' ? (

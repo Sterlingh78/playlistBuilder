@@ -18,7 +18,7 @@ export default function PlaylistList({
 		setHovered(null);
 	};
 	const handleUnfollow = async (index) => {
-		console.log(ownedPlaylists[index]);
+		//console.log(ownedPlaylists[index]);
 
 		try {
 			const response = await fetch(
@@ -32,13 +32,13 @@ export default function PlaylistList({
 			);
 			const string = await response.text();
 			const json = string === '' ? {} : JSON.parse(string);
-			console.log('delete test', json);
+			//console.log('delete test', json);
 			getPlaylists(user);
 		} catch (err) {
 			console.log(err);
 		}
 	};
-	console.log('hovered', hovered);
+	//console.log('hovered', hovered);
 	return (
 		<div>
 			<AddModal
@@ -84,7 +84,7 @@ export default function PlaylistList({
 											<label
 												htmlFor='unfollow-modal'
 												onClick={() => {
-													console.log('fired');
+													//console.log('fired');
 													setListIdx(i);
 													setPlaylistName(playlist.name);
 												}}
