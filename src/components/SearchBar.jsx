@@ -48,7 +48,7 @@ const SearchBar = forwardRef(function SearchBar(props, ref) {
 	return (
 		<div
 			ref={ref}
-			className='navbar bg-base-100'
+			className='navbar bg-base-100 mb-16'
 		>
 			<div className='mx-auto flex flex-col items-stretch w-1/2'>
 				<div className='relative'>
