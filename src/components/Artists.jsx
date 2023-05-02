@@ -21,7 +21,7 @@ export default function Artists({ searchData, handleArtistClick, alone }) {
 										src={
 											artist.images[0]
 												? artist.images[0].url
-												: '../src/assets/fallback.png'
+												: '../public/fallback.png'
 										}
 									/>
 								</div>
