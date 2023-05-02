@@ -129,7 +129,7 @@ function App() {
 		}
 
 		const clientId = 'ad6bc57077394221908d7a4e65f027d4';
-		const redirectUri = 'http://localhost:5173/';
+		const redirectUri = 'https://playlistbuilder.dev/';
 		localStorage.setItem('clientId', clientId);
 		localStorage.setItem('redirectUri', redirectUri);
 
