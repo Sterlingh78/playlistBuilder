@@ -9,7 +9,9 @@ export default function Artist({
 			<div className='hero-content flex-col w-full'>
 				<div className='flex text-center'>
 					<div className='flex flex-col items-center text-center h-full my-auto mr-8 break-words'>
-						<h1 className='text-6xl mx-auto'>{artistData.name}</h1>
+						<h1 className='text-6xl mx-auto text-[hsl(var(--p))]'>
+							{artistData.name}
+						</h1>
 					</div>
 					<img
 						src={artistData.imageUrl}
